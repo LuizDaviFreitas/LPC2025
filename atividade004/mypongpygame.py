@@ -51,12 +51,10 @@ ball_y = 360
 ball_dx = 5
 ball_dy = 5
 
-################################
-# NOVAS VARIÁVEIS DE VELOCIDADE
+# NEW VELOCITY VARIABLES
 BALL_SPEED_DEFAULT = 5
 BALL_SPEED_MAX = 15
-BALL_SPEED_INCREASE = 0.25  # Aumenta 0.25 a cada rebatida
-#################################
+BALL_SPEED_INCREASE = 0.25  # Increases by 0.25 with each hit
 
 # Score
 score_1 = 0
@@ -88,45 +86,45 @@ while game_loop:
         # Clear screen
         screen.fill(COLOR_BLACK)
 
-############
-
-        # Ball collision with the wall (CORRIGIDO)
+        # Ball collision with the wall (FIXED)
         if ball_y > 700:
-            ball_y = 700  # Força a bola de volta para a tela
+            ball_y = 700  # Forces the ball back onto the screen
             ball_dy *= -1
             bounce_sound_effect.play()
         elif ball_y <= 0:
-            ball_y = 0  # Força a bola de volta para a tela
+            ball_y = 0  # Forces the ball back onto the screen
             ball_dy *= -1
             bounce_sound_effect.play()
 
-            # Ball collision with player 1's paddle (CORRIGIDO)
-        # Adicionado 'ball_dx < 0' para evitar bugs
+        # Ball collision with player 1's paddle (FIXED)
+        # Added 'ball_dx < 0' to prevent bugs
         if ball_x < 100 and ball_dx < 0:
             if player_1_y < ball_y + 25 and player_1_y + 150 > ball_y:
-                # Inverte a direção horizontal
+                # Reverses the horizontal direction
                 ball_dx *= -1
                 bounce_sound_effect.play()
 
-                # Calcula o centro do paddle e o centro da bola
+                # Calculates the center of the paddle
+                # and the center of the ball
                 paddle_center = player_1_y + 75
                 ball_center = ball_y + 12.5
 
-                # Calcula a distância do centro do paddle ao centro da bola
+                # Calculates the distance from the center of
+                # the paddle to the center of the ball
                 impact_diff = paddle_center - ball_center
 
-                # Ajusta a velocidade vertical baseado na diferença.
-                # O divisor (ex: 10) controla a "intensidade" do ângulo.
+                # Adjusts the vertical speed based on the difference.
+                # The divisor (e.g., 10) controls the "intensity" of the angle.
                 ball_dy = -impact_diff / 10
-            # AUMENTA A VELOCIDADE DA BOLA
+            # INCREASES THE BALL'S SPEED
             if abs(ball_dx) < BALL_SPEED_MAX:
                 ball_dx += math.copysign(BALL_SPEED_INCREASE, ball_dx)
 
-        # Ball collision with player 2's paddle (CORRIGIDO)
-        # Adicionado 'ball_dx > 0' para evitar bugs
+        # Ball collision with player 2's paddle (FIXED)
+        # Added 'ball_dx > 0' to prevent bugs
         if ball_x > 1160 and ball_dx > 0:
             if player_2_y < ball_y + 25 and player_2_y + 150 > ball_y:
-                # Inverte a direção horizontal
+                # Reverses the horizontal direction
                 ball_dx *= -1
                 bounce_sound_effect.play()
 
@@ -135,27 +133,27 @@ while game_loop:
                 impact_diff = paddle_center - ball_center
                 ball_dy = -impact_diff / 10
 
-                # AUMENTA A VELOCIDADE DA BOLA
-            if abs(ball_dx) < BALL_SPEED_MAX:
-                ball_dx += math.copysign(BALL_SPEED_INCREASE, ball_dx)
+                # INCREASES THE BALL'S SPEED
+                if abs(ball_dx) < BALL_SPEED_MAX:
+                    ball_dx += math.copysign(BALL_SPEED_INCREASE, ball_dx)
 
         # Scoring points
         if ball_x < -50:
             ball_x = 640
             ball_y = 360
-            # Inverte a direção e RESETA a velocidade
+            # Reverses direction and RESETS the speed
             ball_dy *= -1
             ball_dx = math.copysign(BALL_SPEED_DEFAULT, -1)
-            # Saca para a direita
+            # Serves to the right
             score_2 += 1
             scoring_sound_effect.play()
         elif ball_x > 1320:
             ball_x = 640
             ball_y = 360
-            # Inverte a direção e RESETA a velocidade
+            # Reverses direction and RESETS the speed
             ball_dy *= -1
             ball_dx = math.copysign(BALL_SPEED_DEFAULT, 1)
-            # Saca para a esquerda
+            # Serves to the left
             score_1 += 1
             scoring_sound_effect.play()
 
@@ -179,18 +177,16 @@ while game_loop:
         elif player_1_y >= 570:
             player_1_y = 570
 
-        # Player 2 "Artificial Intelligence" (COM CORREÇÃO DE TREMOR)
+        # Player 2 "Artificial Intelligence" (WITH JITTER CORRECTION)
         paddle_center = player_2_y + 75
 
-        # Move a raquete suavemente, mas apenas se
-        # a distância for maior que sua velocidade
-        # Isso cria uma "zona morta" para evitar o tremor.
+        # Moves the paddle smoothly, but only if
+        # the distance is greater than its speed
+        # This creates a "dead zone" to prevent jitter.
         if paddle_center < ball_y - player_2_speed:
             player_2_y += player_2_speed
         elif paddle_center > ball_y + player_2_speed:
             player_2_y -= player_2_speed
-
-################
 
         # Player 2 collides with upper wall
         if player_2_y <= 0:
